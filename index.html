@@ -1,0 +1,221 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>星云启动器 Nebula Launcher v2 · 完全原创的 Minecraft Java 版启动器</title>
+<style>
+  :root{
+    --bg:#070b16; --panel:rgba(20,28,50,.72); --line:rgba(120,150,255,.18);
+    --txt:#e8eeff; --sub:#9aa7c9; --acc:#6c8cff; --acc2:#b48cff; --pink:#ff9ecb;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;overflow-x:hidden}
+  canvas#petals{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .wrap{position:relative;z-index:1}
+
+  /* ---------- Hero ---------- */
+  .hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;position:relative;
+    background:radial-gradient(1200px 600px at 50% -10%,rgba(108,140,255,.22),transparent 60%),
+               radial-gradient(900px 500px at 80% 110%,rgba(255,158,203,.14),transparent 60%);}
+  .hero .logo{font-size:64px;margin-bottom:8px;filter:drop-shadow(0 0 24px rgba(108,140,255,.8));animation:float 4s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+  .hero h1{font-size:clamp(40px,7vw,84px);font-weight:900;letter-spacing:6px;
+    background:linear-gradient(120deg,#fff,var(--acc) 40%,var(--pink) 80%);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .sub{margin-top:14px;font-size:clamp(14px,2vw,20px);color:var(--sub);letter-spacing:2px}
+  .hero .badges{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+  .badge{padding:8px 18px;border:1px solid var(--line);border-radius:999px;background:var(--panel);backdrop-filter:blur(8px);font-size:13px;color:var(--txt)}
+  .scroll-hint{position:absolute;bottom:34px;font-size:13px;color:var(--sub);animation:bob 1.6s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+  /* ---------- 通用区块 ---------- */
+  section{max-width:1180px;margin:0 auto;padding:90px 24px}
+  .sec-title{font-size:clamp(26px,4vw,40px);font-weight:800;text-align:center;margin-bottom:10px;
+    background:linear-gradient(120deg,#fff,var(--acc));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sec-sub{text-align:center;color:var(--sub);margin-bottom:52px;font-size:15px}
+
+  /* ---------- 特性卡片 ---------- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:20px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:26px;backdrop-filter:blur(10px);
+    transition:.35s;transform:translateY(0);position:relative;overflow:hidden}
+  .card::before{content:"";position:absolute;inset:0;background:radial-gradient(300px 120px at 20% 0%,rgba(108,140,255,.16),transparent 60%);opacity:0;transition:.35s}
+  .card:hover{transform:translateY(-8px);border-color:rgba(140,170,255,.5);box-shadow:0 18px 44px rgba(0,0,0,.45)}
+  .card:hover::before{opacity:1}
+  .card .ico{font-size:30px;margin-bottom:14px;display:inline-block}
+  .card h3{font-size:18px;margin-bottom:8px}
+  .card p{color:var(--sub);font-size:13.5px;line-height:1.7}
+
+  /* ---------- 截图墙 ---------- */
+  .shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+  .shot{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:.35s;transform:translateY(0)}
+  .shot:hover{transform:translateY(-6px) scale(1.01);border-color:rgba(140,170,255,.5)}
+  .shot img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;background:#000}
+  .shot .cap{padding:12px 16px;font-size:13px;color:var(--txt);background:rgba(10,16,32,.85)}
+  .shot .cap small{display:block;color:var(--sub);margin-top:3px}
+
+  /* ---------- 架构 ---------- */
+  .arch{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+  .arch .item{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;font-size:13.5px;color:var(--sub);line-height:1.8;transition:.3s}
+  .arch .item:hover{border-color:rgba(180,140,255,.55)}
+  .arch b{color:var(--txt);display:block;margin-bottom:4px;font-size:14.5px}
+
+  /* ---------- 下载 ---------- */
+  .dl-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:10px}
+  .dl{background:linear-gradient(160deg,rgba(30,42,80,.85),rgba(14,20,38,.92));border:1px solid var(--line);border-radius:22px;padding:32px 26px;text-align:center;backdrop-filter:blur(12px);transition:.35s;position:relative;overflow:hidden}
+  .dl::after{content:"";position:absolute;top:-60%;left:50%;width:240px;height:240px;background:radial-gradient(circle,rgba(108,140,255,.25),transparent 70%);transform:translateX(-50%);transition:.4s}
+  .dl:hover{transform:translateY(-8px);border-color:rgba(140,170,255,.6)}
+  .dl:hover::after{top:-30%}
+  .dl .os{font-size:42px}
+  .dl h3{font-size:20px;margin:10px 0 6px}
+  .dl p{color:var(--sub);font-size:13px;line-height:1.7;min-height:64px}
+  .dl a.btn{display:inline-block;margin-top:16px;padding:12px 34px;border-radius:999px;text-decoration:none;font-weight:700;color:#fff;
+    background:linear-gradient(120deg,var(--acc),var(--acc2));box-shadow:0 8px 24px rgba(108,140,255,.4);transition:.3s;position:relative;z-index:1}
+  .dl a.btn:hover{transform:scale(1.06);box-shadow:0 12px 34px rgba(108,140,255,.6)}
+  .dl .soon{display:inline-block;margin-top:16px;padding:12px 34px;border-radius:999px;border:1px dashed var(--line);color:var(--sub);font-size:14px}
+  .note{text-align:center;color:var(--sub);font-size:13px;margin-top:26px;line-height:2}
+
+  footer{padding:40px;text-align:center;color:var(--sub);font-size:12.5px;border-top:1px solid var(--line);line-height:2}
+  .reveal{opacity:0;transform:translateY(26px);transition:all .7s ease}
+  .reveal.on{opacity:1;transform:none}
+</style>
+</head>
+<body>
+<canvas id="petals"></canvas>
+<div class="wrap">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="logo">✦</div>
+    <h1>星云启动器</h1>
+    <div class="sub">Nebula Launcher v2 — 完全原创的 Minecraft Java 版启动器</div>
+    <div class="badges">
+      <span class="badge">✅ 零第三方启动器源码</span>
+      <span class="badge">🚀 真正启动 Minecraft Java 版</span>
+      <span class="badge">🧩 模组 / 整合包 / 资源包</span>
+      <span class="badge">🤖 豆包 AI 助手</span>
+      <span class="badge">🖥️ Windows / Linux</span>
+    </div>
+    <div class="scroll-hint">↓ 往下滑 · 看实测 · 选安装包</div>
+  </div>
+
+  <!-- 特性 -->
+  <section>
+    <h2 class="sec-title">为什么是星云启动器</h2>
+    <p class="sec-sub">界面、下载、账户、模组、整合包、AI —— 全部自己写的原创核心</p>
+    <div class="grid">
+      <div class="card"><span class="ico">🧱</span><h3>完全原创</h3><p>全新工程、全新代码库。版本解析、依赖下载、启动参数、配置存储、JSON/HTTP 工具全部自研，不引用任何第三方启动器源码。</p></div>
+      <div class="card"><span class="ico">📦</span><h3>900+ 版本</h3><p>接入 Mojang 官方版本清单，正式版 / 快照 / 远古版全覆盖，支持官方源与 BMCLAPI 国内镜像切换。</p></div>
+      <div class="card"><span class="ico">🧩</span><h3>真实模组生态</h3><p>Modrinth 真实数据：模组、资源包、整合包三类中心，图标 + 简洁名 + 下载量，一键装进对应目录。</p></div>
+      <div class="card"><span class="ico">📦</span><h3>整合包一键装</h3><p>自研 .mrpack 解析器：自动解压、解析依赖、下载模组、应用 overrides 配置，导入即玩。</p></div>
+      <div class="card"><span class="ico">👤</span><h3>离线 + 微软账户</h3><p>离线账户确定性 UUID；微软设备码全流程（XBL→XSTS→Minecraft 登录），启动器不接触账号密码。</p></div>
+      <div class="card"><span class="ico">🤖</span><h3>豆包 AI 助手</h3><p>火山方舟豆包大模型深度问答；未配置 Key 自动启用离线知识库，安全红线：不回答账号密码、不透露日志内容。</p></div>
+    </div>
+  </section>
+
+  <!-- 实测截图 -->
+  <section>
+    <h2 class="sec-title">真机实测画面</h2>
+    <p class="sec-sub">以下全部为星云启动器真实运行截图（无任何修饰与 AI 水印）</p>
+    <div class="shots">
+      <div class="shot"><img src="assets/launcher-home.png" alt="启动器首页"><div class="cap">星云启动器 v2 首页<small>自研星云主题 UI · 10 个功能页</small></div></div>
+      <div class="shot"><img src="assets/mods.png" alt="模组中心"><div class="cap">模组中心<small>Modrinth 真实模组 · sodium 搜索</small></div></div>
+      <div class="shot"><img src="assets/loading.png" alt="游戏加载页"><div class="cap">游戏加载页<small>资源索引构建中</small></div></div>
+      <div class="shot"><img src="assets/welcome.png" alt="欢迎界面"><div class="cap">Minecraft 欢迎界面<small>星云启动器 v2 启动的 1.20.1</small></div></div>
+      <div class="shot"><img src="assets/main-menu.png" alt="游戏主菜单"><div class="cap">游戏主菜单<small>Minecraft 1.20.1 · 完全原创核心启动</small></div></div>
+      <div class="shot"><img src="assets/main-menu-cn.png" alt="中文主菜单"><div class="cap">中文主菜单<small>单人 / 多人 / Realms</small></div></div>
+      <div class="shot"><img src="assets/ingame.png" alt="进入世界"><div class="cap">进入世界实测<small>世界生成 · 玩家移动 / 跳跃</small></div></div>
+      <div class="shot"><img src="assets/ai.png" alt="AI 助手"><div class="cap">AI 助手<small>豆包大模型 · 离线知识库兜底</small></div></div>
+    </div>
+  </section>
+
+  <!-- 架构 -->
+  <section>
+    <h2 class="sec-title">原创核心架构</h2>
+    <p class="sec-sub">core（纯 Java 17）· desktop（Swing 自绘 UI）· android（Pojav 运行时 + 自研界面）</p>
+    <div class="arch">
+      <div class="item"><b>Manifest</b>Mojang 官方版本清单解析（915+ 版本）</div>
+      <div class="item"><b>VersionMeta</b>版本 JSON 解析 · inheritsFrom 继承合并</div>
+      <div class="item"><b>LibraryResolver</b>rules / classifier / natives 解析与镜像下载</div>
+      <div class="item"><b>AssetIndex</b>资源索引 · 8 线程并发下载 · 断点续传</div>
+      <div class="item"><b>Launcher</b>新版 arguments / 旧版参数 · JVM 拉起 · 日志实时转发</div>
+      <div class="item"><b>Account</b>离线 UUID · 微软设备码全流程</div>
+      <div class="item"><b>ModrinthClient</b>模组 / 资源包 / 整合包搜索下载</div>
+      <div class="item"><b>MrpackInstaller</b>.mrpack 解析 · 依赖下载 · overrides 应用</div>
+      <div class="item"><b>LoaderInstaller</b>Fabric / Forge / NeoForge / Quilt 安装器封装</div>
+      <div class="item"><b>AiAssistant</b>豆包大模型 + 离线知识库 + 安全红线</div>
+      <div class="item"><b>Json / Net</b>自研 JSON 解析器 · HTTP 下载引擎（零外部依赖）</div>
+      <div class="item"><b>Settings</b>JSON 配置存储 · 实时生效</div>
+    </div>
+  </section>
+
+  <!-- 下载 -->
+  <section>
+    <h2 class="sec-title">选择你的安装包</h2>
+    <p class="sec-sub">电脑版 · 安卓版（Pojav 运行时 + 自研界面）均已就绪</p>
+    <div class="dl-grid">
+      <div class="dl">
+        <div class="os">🪟</div>
+        <h3>Windows 版</h3>
+        <p>内置 JRE17 运行环境，双击 NebulaLauncher.exe 即用，无需单独装 Java。</p>
+        <a class="btn" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/NebulaLauncher-v2-Windows.zip" target="_blank" rel="noopener">下载 Windows 安装包</a>
+      </div>
+      <div class="dl">
+        <div class="os">🐧</div>
+        <h3>Linux 版</h3>
+        <p>任意 Linux 发行版，Java 17 环境直接运行启动脚本，支持官方源/镜像切换。</p>
+        <a class="btn" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/NebulaLauncher-v2-Linux.zip" target="_blank" rel="noopener">下载 Linux 安装包</a>
+      </div>
+      <div class="dl">
+        <div class="os">📱</div>
+        <h3>安卓版（v5.7 独立版）</h3>
+        <p>界面与全部功能自研；Pojav 运行时仅负责启动游戏与游戏内输入。</p>
+        <a class="btn" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/NebulaLauncher-Android-v5.7.apk" target="_blank" rel="noopener">下载安卓 APK · v5.7 独立版</a>
+      </div>
+    </div>
+    <p class="note">macOS：直接使用 <b>nebula-v2.jar</b>（`java -jar nebula-v2.jar`），核心与 Windows/Linux 完全一致。<br>
+    首次启动会自动创建游戏目录；下载源可在设置里切换官方 / BMCLAPI 镜像。GPL-v3 · 独立原创工程</p>
+  </section>
+
+  <footer>
+    ✦ 星云启动器 Nebula Launcher v2 · 界面 / 下载 / 账户 / 模组 / 整合包 / AI 全部原创<br>
+    启动游戏依赖 Mojang 官方客户端文件与开源运行时组件 · 本页所有截图均为真实运行截图
+  </footer>
+</div>
+
+<script>
+  // ---------- 樱花粒子 ----------
+  const cv = document.getElementById('petals'), ctx = cv.getContext('2d');
+  let W, H, petals = [];
+  function size(){ W = cv.width = innerWidth; H = cv.height = innerHeight; }
+  size(); addEventListener('resize', size);
+  const COLORS = ['#ff9ecb','#ffc4de','#ffd9ec','#ffb3d9','#ff8fb8'];
+  function mkP(){ return {
+    x: Math.random()*W, y: -20-Math.random()*H*.4,
+    r: 3+Math.random()*5, s: .5+Math.random()*1.6,
+    vx: .2+Math.random()*.8, sway: Math.random()*Math.PI*2, swaySpd: .005+Math.random()*.015,
+    c: COLORS[Math.random()*COLORS.length|0], a: .35+Math.random()*.5
+  }; }
+  for(let i=0;i<70;i++) petals.push(mkP());
+  function frame(){
+    ctx.clearRect(0,0,W,H);
+    for(const p of petals){
+      p.y += p.s; p.sway += p.swaySpd; p.x += p.vx + Math.sin(p.sway)*.7;
+      if(p.y > H+30 || p.x < -40 || p.x > W+40){ Object.assign(p, mkP()); }
+      ctx.globalAlpha = p.a;
+      ctx.fillStyle = p.c;
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y, p.r*.8, p.r, 0, 0, Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+  frame();
+
+  // ---------- 滚动显现 ----------
+  const io = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); }), {threshold:.12});
+  document.querySelectorAll('.card,.shot,.arch .item,.dl,.sec-title,.sec-sub').forEach(el => { el.classList.add('reveal'); io.observe(el); });
+</script>
+</body>
+</html>
