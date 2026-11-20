@@ -78,6 +78,21 @@
   .note{text-align:center;color:var(--sub);font-size:13px;margin-top:26px;line-height:2}
 
   footer{padding:40px;text-align:center;color:var(--sub);font-size:12.5px;border-top:1px solid var(--line);line-height:2}
+
+  /* ---------- 第三方收录 ---------- */
+  .third-grid{display:grid;grid-template-columns:1fr;gap:18px}
+  .third-card{background:rgba(24,22,18,.72);border:1px solid rgba(255,196,120,.22);border-radius:16px;padding:24px;backdrop-filter:blur(10px)}
+  .third-head{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+  .third-head .os{font-size:30px}
+  .third-head h3{font-size:17px;display:flex;align-items:center;gap:8px}
+  .tag{font-size:11px;padding:2px 8px;border-radius:6px;background:rgba(255,196,120,.16);color:#ffc478;border:1px solid rgba(255,196,120,.35)}
+  .third-meta{font-size:12px;color:var(--sub);margin-top:4px;font-family:ui-monospace,monospace}
+  .third-card p{color:var(--sub);font-size:13.5px;line-height:1.8}
+  .third-card b{color:#ffd9a8}
+  a.btn.ghost{display:inline-block;margin-top:14px;padding:10px 22px;border-radius:999px;text-decoration:none;font-size:13px;font-weight:600;
+    color:#ffc478;border:1px solid rgba(255,196,120,.45);background:transparent;transition:.25s}
+  a.btn.ghost:hover{background:rgba(255,196,120,.12)}
+
   .reveal{opacity:0;transform:translateY(26px);transition:all .7s ease}
   .reveal.on{opacity:1;transform:none}
 </style>
@@ -97,7 +112,6 @@
       <span class="badge">🧩 模组 / 整合包 / 资源包</span>
       <span class="badge">🤖 豆包 AI 助手</span>
       <span class="badge">🖥️ Windows / Linux</span>
-      <span class="badge">🍎 iOS 测试版</span>
     </div>
     <div class="scroll-hint">↓ 往下滑 · 看实测 · 选安装包</div>
   </div>
@@ -155,7 +169,7 @@
   <!-- 下载 -->
   <section>
     <h2 class="sec-title">选择你的安装包</h2>
-    <p class="sec-sub">电脑版 · 安卓版已就绪 · iOS 版进入测试阶段（暂不能启动游戏）</p>
+    <p class="sec-sub">电脑版 · 安卓版均已就绪（星云自有版本）</p>
     <div class="dl-grid">
       <div class="dl">
         <div class="os">🪟</div>
@@ -175,21 +189,28 @@
         <p>界面与全部功能自研；Pojav 运行时仅负责启动游戏与游戏内输入。</p>
         <a class="btn" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/NebulaLauncher-Android-v5.7.apk" target="_blank" rel="noopener">下载安卓 APK · v5.7 独立版</a>
       </div>
-      <div class="dl">
-        <div class="os">🍎</div>
-        <h3>iOS 版（测试版）</h3>
-        <p>PiLauncher 0.1.59 · 内置 iOS JRE 运行时，支持 iPad / iPhone（iOS 14+）。当前为测试版，<b>还不能真实启动游戏</b>，等待后续版本。</p>
-        <a class="btn" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/PiLauncher-0.1.59-ios-jre.ipa" target="_blank" rel="noopener">下载 iOS IPA（测试版）</a>
-        <span class="soon">🧪 测试版 · 暂不能启动游戏</span>
-      </div>
     </div>
     <p class="note">macOS：直接使用 <b>nebula-v2.jar</b>（`java -jar nebula-v2.jar`），核心与 Windows/Linux 完全一致。<br>
     首次启动会自动创建游戏目录；下载源可在设置里切换官方 / BMCLAPI 镜像。GPL-v3 · 独立原创工程</p>
   </section>
 
+  <!-- 第三方收录（非星云出品） -->
+  <section>
+    <h2 class="sec-title">第三方启动器收录</h2>
+    <p class="sec-sub">以下不是星云启动器，是别人做的项目，仅作收录下载，与星云无关</p>
+    <div class="third-grid">
+      <div class="third-card">
+        <div class="third-head"><span class="os">🍎</span><div><h3>PiLauncher <span class="tag">第三方</span></h3>
+          <p class="third-meta">com.mrshell.PiLauncher · 0.1.59 · iOS 14+ · arm64</p></div></div>
+        <p>作者 mrshell。界面/下载/账户/模组功能完整，但 iOS 侧缺少 LWJGL、GLFW、OpenAL 与 JIT 链路，<b>当前无法真实启动游戏</b>，属测试状态。不是星云的产品，出问题请找原作者。</p>
+        <a class="btn ghost" href="https://github.com/hjm98-rgb/nebula-launcher/releases/latest/download/PiLauncher-0.1.59-ios-jre.ipa" target="_blank" rel="noopener">下载 PiLauncher IPA（第三方 · 测试）</a>
+      </div>
+    </div>
+  </section>
+
   <footer>
     ✦ 星云启动器 Nebula Launcher v2 · 界面 / 下载 / 账户 / 模组 / 整合包 / AI 全部原创<br>
-    启动游戏依赖 Mojang 官方客户端文件与开源运行时组件 · iOS 版为测试版，暂不能启动游戏 · 本页所有截图均为真实运行截图
+    启动游戏依赖 Mojang 官方客户端文件与开源运行时组件 · 第三方收录（PiLauncher）非星云出品 · 本页所有截图均为真实运行截图
   </footer>
 </div>
 
